@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hoş Geldiniz</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        .welcome-message {
+            font-size: 36px;
+            font-weight: bold;
+            text-align: center;
+            color: #f44336;
+        }
+        .logout-button {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            background-color: #f44336;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="welcome-message">
+        <p id="hosgeldin"></p>
+    </div>
+    <button class="logout-button" onclick="logout()">Çıkış Yap</button>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const token = localStorage.getItem('token');
+            console.log("kullanıcı token:" + token);
+            
+            if (!token) {
+                // Token yoksa kullanıcıyı giriş sayfasına yönlendir
+                window.location.href = 'index.html';
+            } else {
+                await kullaniciveri();
+            }
+        });
+
+        function logout() {
+            // Token'ı temizle
+            localStorage.removeItem('token');
+            // Kullanıcıyı giriş sayfasına yönlendir
+            window.location.href = 'index.html';
+        }
+
+        async function kullaniciveri() {
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch('http://localhost:5500/login/control', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ token }),
+                });
+
+                console.log('Gönderilen veriler:', { token });
+                const data = await response.json();
+                console.log('Gelen yanıt:', data);
+
+                if (data && data.name && data.surname) {
+                    const userinfo = `${data.name} ${data.surname}`;
+                    document.getElementById("hosgeldin").innerHTML = `TEBRİKLER ${userinfo} BAŞARIYLA GİRİŞ YAPTINIZ.`;
+                } else {
+                    alert('Kullanıcı bulunamadı!');
+                }
+            } catch (error) {
+                console.error('Giriş hatası:', error);
+                alert('Bir hata oluştu. Lütfen tekrar deneyin.');
+            }
+        }
+    </script>
+</body>
+</html>
