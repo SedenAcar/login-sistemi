@@ -19,7 +19,7 @@ app.use(express.json());
 app.use(express.static('public'));
 
 //MongoDB Bağlantısı
-mongoose.connect('mongodb://localhost:27017/userinfo');
+mongoose.connect('mongodb://localhost:27017/loginsys');
 
 // Routes
 app.use('/login', loginRoutes);
